@@ -1,7 +1,10 @@
 <!DOCTYPE html>
+<?php
+include("settings.php");
+?>
 <html lang="en">
 <head>
-    <title>User map using leaflet, jquery and bootstrap</title>
+    <title><?php echo $TITLE ?></title>
 
     <link rel="stylesheet" href="lib/leaflet-0.6.4/leaflet.css" />
     <!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.ie.css" /><![endif]-->
@@ -62,7 +65,7 @@
 <!--     <h2>User map using leaflet, jquery and bootstrap</h2> -->
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <ul class="nav navbar-nav navbar-header">
-	<h4>User map using leaflet, jquery and bootstrap</h4>
+	<h4><?php echo $TITLE ?></h4>
       </ul>
         <ul class="nav navbar-nav navbar-text pull-right">
 	    <button type="submit" class="btn btn-primary right" id="navigate">
