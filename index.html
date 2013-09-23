@@ -330,6 +330,7 @@
 	    map.off('click', onMapClick);
 	});
 	$("#zoommax").bind('click', function(event) {
+	    map.closePopup()
 	    map.fitBounds(cluster.getBounds());
 	});
 </script>
