@@ -75,6 +75,20 @@
 	</ul>
       </div>
     </nav>
+    <div class="modal hide fade" id="errorName">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Error</h3>
+      </div>
+      <div class="modal-body">Name is required!</div>
+    </div>
+    <div class="modal hide fade" id="errorUrl">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Error</h3>
+      </div>
+      <div class="modal-body">Name is required!</div>
+    </div>
     <div id="map"></div>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script>
@@ -86,11 +100,11 @@
 	    var slon = $("#lon").val();
 	    var web = $("#website").val();
 	    if (name.length == 0) {
-	      alert("Name is required!");
+	      $("#errorName").modal('show');
 	      return false;
 	    }
 	    if (web && web.indexOf('http://') != 0){
-	      alert("Website url is not valid");
+	      $("#errorUrl").modal('show');
 	      return false
 	    }
 	    var dataString = 'name='+ name + '&company=' + comp + '&website=' + web + '&lat=' + slat + '&lon=' + slon;
