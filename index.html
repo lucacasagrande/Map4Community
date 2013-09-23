@@ -84,11 +84,16 @@
 	    var comp = $("#company").val();
 	    var slat = $("#lat").val();
 	    var slon = $("#lon").val();
+	    var web = $("#website").val();
 	    if (name.length == 0) {
 	      alert("Name is required!");
 	      return false;
 	    }
-	    var dataString = 'name='+ name + '&company=' + comp + '&lat=' + slat + '&lon=' + slon;
+	    if (web && web.indexOf('http://') != 0){
+	      alert("Website url is not valid");
+	      return false
+	    }
+	    var dataString = 'name='+ name + '&company=' + comp + '&website=' + web + '&lat=' + slat + '&lon=' + slon;
 	    map.closePopup()
 	    $.ajax({
 	      type: "POST",
@@ -105,7 +110,7 @@
 	
 	function getUser() {
 	    user = L.geoCsv(null,{
-		titles: ['lng', 'lat', 'User', 'Company'],
+		titles: ['lng', 'lat', 'User', 'Company', 'Website'],
 		fieldSeparator: ';',
 		lineSeparator: '\n',
 		deleteDobleQuotes: true,
@@ -117,6 +122,10 @@
 			if (title == 'Company') {
 			    if (feature.properties[clave]) {
 				popup += '<b>'+title+'</b>: '+feature.properties[clave]+'<br />';
+			    }
+			} else if (title == 'Website') {
+			    if (feature.properties[clave]) {
+				popup += '<b><a href="'+feature.properties[clave]+'" target="_blank">'+feature.properties[clave].replace('http://','')+'</b>';
 			    }
 			} else {
 			    popup += '<b>'+title+'</b>: '+feature.properties[clave]+'<br />';
@@ -167,15 +176,14 @@
 				<h4 class="form-signin-heading">Please add your self</h4> \
 				<input type="text" class="input-block-level" id="name" placeholder="Name and surname"> \
 				<input type="text" class="input-block-level" id="company" placeholder="Company"> \
+				<input type="text" class="input-block-level" id="website" placeholder="Website (with http://)"> \
 				<input type="hidden" class="input-block-level" id="lat" value="' + e.latlng.lat + '"> \
 				<input type="hidden" class="input-block-level" id="lon" value="' + e.latlng.lng + '"> \
 				<button type="button" class="btn btn-primary" onclick="insertUser()">Submit</button> \
 			      </form>')
 		.openOn(map);
 	}
-// 				<button class="btn btn-large btn-primary" type="submit" id="useradd_sub">Add</button> \
 
-	
 	$("#useradd").bind('click', function(event) {
 	    map.on('click', onMapClick);
 	});
