@@ -32,6 +32,9 @@
 	  width:100%;
 	  height:100%;
       }
+      .leaflet-container {
+	  font: 16px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+      }
       .navbar, .navbar-fixed-top, .navbar-default {
 	  background-color: #FFFFFF!important;
 	  background-image: linear-gradient(to bottom,#FFFFFF,#FFFFFF)!important;
@@ -50,7 +53,6 @@
 	  background-image: linear-gradient(to bottom,#03FF54,#009718);
 	  background-color: #009718;
       }
-      
       .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary:hover, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] {
 	  background-color: #009718!important;
       }
@@ -75,6 +77,53 @@
 	</ul>
       </div>
     </nav>
+    <div class="modal hide fade" id="updateUser">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Update user information</h3>
+      </div>
+      <div class="modal-body">
+	  <form class="form-signin"  action="">
+	      <input type="text" class="input-block-level" id="oldNameF" placeholder="Name and surname">
+	      <input type="text" class="input-block-level" id="oldCompanyF" placeholder="Company">
+	      <input type="text" class="input-block-level" id="oldWebsiteF" placeholder="Website (with http://)">
+	      <button type="button" class="btn btn-primary right" onclick="updateUser()">Update</button>
+	  </form>
+      </div>
+    </div>
+    <div class="modal hide fade" id="removeUser">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Remove user</h3>
+      </div>
+      <div class="modal-body">
+	  <form class="form-signin"  action="">
+	      <input type="text" class="input-block-level" id="removeName" placeholder="Name and surname">
+<!--	      <input type="password" class="input-block-level" id="removePassword" placeholder="Password">-->
+	      <button type="button" class="btn btn-primary right" onclick="removeUser()">Remove</button>
+	  </form>
+      </div>
+    </div>
+    <div class="modal hide fade" id="updateSuccess">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Success</h3>
+      </div>
+      <div class="modal-body">
+	  The update run successfully <br />
+	  <button type="button" class="btn btn-primary right" onclick="$('#updateSuccess').modal('hide');">Ok</button>
+      </div>
+    </div>
+    <div class="modal hide fade" id="removeSuccess">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Success</h3>
+      </div>
+      <div class="modal-body">
+	  The deletion run successfully <br />
+	  <button type="button" class="btn btn-primary right" onclick="$('#removeSuccess').modal('hide');">Ok</button>
+      </div>
+    </div>
     <div class="modal hide fade" id="errorName">
       <div class="modal-header">
         <a class="close" data-dismiss="modal">x</a>
@@ -92,7 +141,7 @@
     <div id="map"></div>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script>
-        var user, popup, cluster
+        var user, popup, cluster, updateString, removeString;
 	function insertUser() {
 	    var name = $("#name").val();
 	    var comp = $("#company").val();
@@ -121,7 +170,72 @@
 	    });
 	    return false;
 	}
+	function removeUserForm(u, c, w){
+	    $("#removeUser").modal('show');
+	    removeString = 'oldname=' + u + '&oldcompany=' + c + '&oldwebsite=' + w;
+	    return false;
+	}
+	function removeUser(){
+	    var name = $("#removeUser").val();
+	    removeString += '&name=' + name;
+	    console.log(removeString);
+	    $("#removeUser").modal('hide');
+	    $("#removeSuccess").modal('show');
+// 	    $.ajax({
+// 	      type: "POST",
+// 	      url: "remove_user.php",
+// 	      data: removeString,
+// 	      success: function() {
+// 		user.clearLayers();
+// 		cluster.clearLayers();
+// 		getUser();
+// 	      }
+// 	    });
+	}
 	
+	function updateUserForm(u, c, w){
+	    $('#oldNameF')[0].value = u;
+	    if (c) {
+		$('#oldCompanyF')[0].value = c;
+	    } else {
+		$('#oldCompanyF')[0].value = ''
+	    }
+	    if (w) {
+		$('#oldWebsiteF')[0].value = w;
+	    } else {
+		$('#oldWebsiteF')[0].value = ''
+	    }
+	    $('#updateUser').modal('show');
+	    updateString = 'oldname=' + u + '&oldcompany=' + c + '&oldwebsite=' + w;
+	    return false;
+	}
+	function updateUser(){
+	    var name = $("#oldNameF").val();
+	    var comp = $("#oldCompanyF").val();
+	    var web = $("#oldWebsiteF").val();
+	    if (name.length == 0) {
+	      $("#errorName").modal('show');
+	      return false;
+	    }
+	    if (web && web.indexOf('http://') != 0){
+	      $("#errorUrl").modal('show');
+	      return false
+	    }
+	    updateString += '&name=' + name + '&company=' + comp + '&website=' + web;
+	    console.log(updateString);
+	    $("#updateUser").modal('hide');
+	    $("#updateSuccess").modal('show');
+// 	    $.ajax({
+// 	      type: "POST",
+// 	      url: "update_user.php",
+// 	      data: updateString,
+// 	      success: function() {
+// 		user.clearLayers();
+// 		cluster.clearLayers();
+// 		getUser();
+// 	      }
+// 	    });
+	}
 	function getUser() {
 	    user = L.geoCsv(null,{
 		titles: ['lng', 'lat', 'User', 'Company', 'Website'],
@@ -130,21 +244,30 @@
 		deleteDobleQuotes: true,
 		firstLineTitles: false,
 		onEachFeature: function (feature, layer) {
-		    var popup = '';
+		    var popup = '', oldUser = '', oldCompany = '', oldWebsite = '';
 		    for (var clave in feature.properties) {
 			var title = user.getPropertyTitle(clave);
 			if (title == 'Company') {
 			    if (feature.properties[clave]) {
 				popup += '<b>'+title+'</b>: '+feature.properties[clave]+'<br />';
+				oldCompany = feature.properties[clave];
+			    } else {
+				oldCompany = '';
 			    }
 			} else if (title == 'Website') {
 			    if (feature.properties[clave]) {
-				popup += '<b><a href="'+feature.properties[clave]+'" target="_blank">'+feature.properties[clave].replace('http://','')+'</b>';
+				popup += '<b><a href="'+feature.properties[clave]+'" target="_blank">'+feature.properties[clave].replace('http://','')+'</a></b><br />';
+				oldWebsite = feature.properties[clave];
+			    } else {
+				oldWebsite = '';
 			    }
 			} else {
 			    popup += '<b>'+title+'</b>: '+feature.properties[clave]+'<br />';
+			    oldUser = feature.properties[clave];
 			}
 		    }
+		    popup += '<br /><button type="button" class="btn btn-primary btn-small" onclick="updateUserForm(\'' + oldUser + '\', \'' + oldCompany + '\',\'' + oldWebsite + '\')">Update user</button>'
+		    popup += '<span style="padding-right: 10px;"></span><button type="button" class="btn btn-primary btn-small" onclick="removeUserForm(\'' + oldUser + '\', \'' + oldCompany + '\',\'' + oldWebsite + '\')">Remove user</button>'
 		    layer.bindPopup(popup);
 		},
 		pointToLayer: function (feature, latlng) {
