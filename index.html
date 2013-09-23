@@ -185,9 +185,11 @@
 	}
 
 	$("#useradd").bind('click', function(event) {
+	    $('#map').css('cursor', 'crosshair');
 	    map.on('click', onMapClick);
 	});
 	$("#navigate").bind('click', function(event) {
+	    $('#map').css('cursor', '');
 	    map.off('click', onMapClick);
 	});
 	$("#zoommax").bind('click', function(event) {
