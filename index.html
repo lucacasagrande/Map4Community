@@ -96,7 +96,7 @@
 	      data: dataString,
 	      success: function() {
 		user.clearLayers();
-		cluster.clearLayers();s
+		cluster.clearLayers();
 		getUser();
 	      }
 	    });
@@ -114,7 +114,13 @@
 		    var popup = '';
 		    for (var clave in feature.properties) {
 			var title = user.getPropertyTitle(clave);
-			popup += '<b>'+title+'</b><br />'+feature.properties[clave]+'<br /><br />';
+			if (title == 'Company') {
+			    if (feature.properties[clave]) {
+				popup += '<b>'+title+'</b>: '+feature.properties[clave]+'<br />';
+			    }
+			} else {
+			    popup += '<b>'+title+'</b>: '+feature.properties[clave]+'<br />';
+			}
 		    }
 		    layer.bindPopup(popup);
 		},
