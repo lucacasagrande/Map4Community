@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <?php
 include("settings.php");
+include("functions.php");
 ?>
 <html lang="en">
 <head>
@@ -134,32 +135,47 @@ include("settings.php");
       </div>
       <div class="modal-body">Name is required!</div>
     </div>
+    <div class="modal hide fade" id="errorPasswd">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Error</h3>
+      </div>
+      <div class="modal-body">Password is required!</div>
+    </div>
     <div class="modal hide fade" id="errorUrl">
       <div class="modal-header">
         <a class="close" data-dismiss="modal">x</a>
         <h3>Error</h3>
       </div>
-      <div class="modal-body">Name is required!</div>
+      <div class="modal-body">The url seems to be wrong!<br />Please insert a valid url with <i>http://</i></div>
     </div>
     <div id="map"></div>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script>
         var user, popup, cluster, updateString, removeString;
+        var csvfile = "<?php Print($CSVNAME); ?>";
 	function insertUser() {
 	    var name = $("#name").val();
 	    var comp = $("#company").val();
 	    var slat = $("#lat").val();
 	    var slon = $("#lon").val();
 	    var web = $("#website").val();
+	    var passwd = $("#passwd").val();
 	    if (name.length == 0) {
 	      $("#errorName").modal('show');
 	      return false;
+	    }
+	    if (passwd.length == 0) {
+	      $("#errorPasswd").modal('show');
+	      return false;
+	    } else {
+	      passwd_en = "<?php Print(encrypt_decrypt("encrypt",passwd)); ?>";
 	    }
 	    if (web && web.indexOf('http://') != 0){
 	      $("#errorUrl").modal('show');
 	      return false
 	    }
-	    var dataString = 'name='+ name + '&company=' + comp + '&website=' + web + '&lat=' + slat + '&lon=' + slon;
+	    var dataString = 'name='+ name + '&company=' + comp + '&website=' + web + '&lat=' + slat + '&lon=' + slon + '&passwd=' + passwd_en;
 	    map.closePopup()
 	    $.ajax({
 	      type: "POST",
@@ -241,7 +257,7 @@ include("settings.php");
 	}
 	function getUser() {
 	    user = L.geoCsv(null,{
-		titles: ['lng', 'lat', 'User', 'Company', 'Website'],
+		titles: ['lng', 'lat', 'User', 'Company', 'Website', 'Password'],
 		fieldSeparator: ';',
 		lineSeparator: '\n',
 		deleteDobleQuotes: true,
@@ -264,6 +280,8 @@ include("settings.php");
 			    } else {
 				oldWebsite = '';
 			    }
+			} else if (title == 'Password') {
+			    popup += '';
 			} else {
 			    popup += '<b>'+title+'</b>: '+feature.properties[clave]+'<br />';
 			    oldUser = feature.properties[clave];
@@ -280,7 +298,7 @@ include("settings.php");
 	    $.ajax ({
 		type:'GET',
 		dataType:'text',
-		url:'user.csv',
+		url:csvfile,
 		error: function() {
 		    alert('No se pudieron cargar los datos');
 		},
@@ -315,6 +333,7 @@ include("settings.php");
 		.setContent('<form class="form-signin"  action=""> \
 				<h4 class="form-signin-heading">Please add your self</h4> \
 				<input type="text" class="input-block-level" id="name" placeholder="Name and surname"> \
+				<input type="password" class="input-block-level" id="passwd" placeholder="Password"> \
 				<input type="text" class="input-block-level" id="company" placeholder="Company"> \
 				<input type="text" class="input-block-level" id="website" placeholder="Website (with http://)"> \
 				<input type="hidden" class="input-block-level" id="lat" value="' + e.latlng.lat + '"> \
