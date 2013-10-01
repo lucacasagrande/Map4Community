@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <?php
 include("settings.php");
-include("functions.php");
 ?>
 <html lang="en">
 <head>
@@ -103,7 +102,7 @@ include("functions.php");
       <div class="modal-body">
 	  <form class="form-signin"  action="">
 	      <input type="text" class="input-block-level" id="removeName" placeholder="Name and surname">
-<!--	      <input type="password" class="input-block-level" id="removePassword" placeholder="Password">-->
+	      <input type="password" class="input-block-level" id="removePassword" placeholder="Password">
 	      <button type="button" class="btn btn-primary right" onclick="removeUser()">Remove</button>
 	  </form>
       </div>
@@ -152,7 +151,7 @@ include("functions.php");
     <div id="map"></div>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script>
-        var user, popup, cluster, updateString, removeString;
+        var user, popup, cluster, updateString;
         var csvfile = "<?php Print($CSVNAME); ?>";
 	function insertUser() {
 	    var name = $("#name").val();
@@ -168,14 +167,12 @@ include("functions.php");
 	    if (passwd.length == 0) {
 	      $("#errorPasswd").modal('show');
 	      return false;
-	    } else {
-	      passwd_en = "<?php Print(encrypt_decrypt("encrypt",passwd)); ?>";
 	    }
 	    if (web && web.indexOf('http://') != 0){
 	      $("#errorUrl").modal('show');
 	      return false
 	    }
-	    var dataString = 'name='+ name + '&company=' + comp + '&website=' + web + '&lat=' + slat + '&lon=' + slon + '&passwd=' + passwd_en;
+	    var dataString = 'name='+ name + '&company=' + comp + '&website=' + web + '&lat=' + slat + '&lon=' + slon + '&passwd=' + passwd;
 	    map.closePopup()
 	    $.ajax({
 	      type: "POST",
@@ -189,27 +186,31 @@ include("functions.php");
 	    });
 	    return false;
 	}
-	function removeUserForm(u, c, w){
+	function removeUserForm(u){
+	    $("#removeName")[0].value = u;
 	    $("#removeUser").modal('show');
-	    removeString = 'oldname=' + u + '&oldcompany=' + c + '&oldwebsite=' + w;
 	    return false;
 	}
 	function removeUser(){
-	    var name = $("#removeUser").val();
-	    removeString += '&name=' + name;
+	    var name = $("#removeName").val();
+	    var passwd = $("#removePassword").val();
+	    var removeString = '&name=' + name + '&passwd=' + passwd;
 	    console.log(removeString);
-	    $("#removeUser").modal('hide');
-	    $("#removeSuccess").modal('show');
-// 	    $.ajax({
-// 	      type: "POST",
-// 	      url: "remove_user.php",
-// 	      data: removeString,
-// 	      success: function() {
-// 		user.clearLayers();
-// 		cluster.clearLayers();
-// 		getUser();
-// 	      }
-// 	    });
+	    $.ajax({
+	      type: "POST",
+	      url: "remove_user.php",
+	      data: removeString,
+	      success: function() {
+		$("#removeUser").modal('hide');
+		$("#removeSuccess").modal('show');
+		user.clearLayers();
+		cluster.clearLayers();
+		getUser();
+	      },
+	      error: function(request, status, error) {
+		console.log(request.responseText);
+	      }
+	    });
 	}
 	
 	function updateUserForm(u, c, w){
@@ -288,7 +289,7 @@ include("functions.php");
 			}
 		    }
 		    popup += '<br /><button type="button" class="btn btn-primary btn-small" onclick="updateUserForm(\'' + oldUser + '\', \'' + oldCompany + '\',\'' + oldWebsite + '\')">Update user</button>'
-		    popup += '<span style="padding-right: 10px;"></span><button type="button" class="btn btn-primary btn-small" onclick="removeUserForm(\'' + oldUser + '\', \'' + oldCompany + '\',\'' + oldWebsite + '\')">Remove user</button>'
+		    popup += '<span style="padding-right: 10px;"></span><button type="button" class="btn btn-primary btn-small" onclick="removeUserForm(\'' + oldUser + '\')">Remove user</button>'
 		    layer.bindPopup(popup);
 		},
 		pointToLayer: function (feature, latlng) {
