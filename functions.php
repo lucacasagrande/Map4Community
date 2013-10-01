@@ -14,9 +14,22 @@ function encrypt_decrypt($action, $string) {
    }
    else if( $action == 'decrypt' ){
        $output = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($string), MCRYPT_MODE_CBC, $iv);
-       $output = rtrim($output, "");
+       $output = rtrim($output);
    }
    return $output;
+}
+
+function checkArray($array, $user, $password) {
+    if ($array[2] == $user) {
+	$passwd = encrypt_decrypt('decrypt', $array[5]);
+	if ($password == $passwd) {
+	    return true;
+	} else {
+	    return false;
+	}
+    } else {
+	return false;
+    }
 }
 
 ?>
