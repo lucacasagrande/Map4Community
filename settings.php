@@ -1,6 +1,6 @@
 <?php
 
-$TITLE="User map using leaflet, jquery and bootstrap";
+$TITLE="Map4Community";
 $CSVNAME="user.csv";
 
 ?>
