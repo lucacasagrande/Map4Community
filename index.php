@@ -87,9 +87,10 @@ include("settings.php");
       </div>
       <div class="modal-body">
 	  <form class="form-signin"  action="">
-	      <input type="text" class="input-block-level" id="oldNameF" placeholder="Name and surname">
-	      <input type="text" class="input-block-level" id="oldCompanyF" placeholder="Company">
-	      <input type="text" class="input-block-level" id="oldWebsiteF" placeholder="Website (with http://)">
+	      <input type="text" class="input-block-level" id="updateName" placeholder="Name and surname">
+	      <input type="password" class="input-block-level" id="updatePassword" placeholder="Password">
+	      <input type="text" class="input-block-level" id="updateCompany" placeholder="Company">
+	      <input type="text" class="input-block-level" id="updateWebsite" placeholder="Website (with http://)">
 	      <button type="button" class="btn btn-primary right" onclick="updateUser()">Update</button>
 	  </form>
       </div>
@@ -179,9 +180,14 @@ include("settings.php");
 	      url: "add_user.php",
 	      data: dataString,
 	      success: function() {
+		$("#updateUser").modal('hide');
+		$("#updateSuccess").modal('show');
 		user.clearLayers();
 		cluster.clearLayers();
 		getUser();
+	      },
+	      error: function(request, status, error) {
+		console.log(request.responseText);
 	      }
 	    });
 	    return false;
@@ -214,25 +220,26 @@ include("settings.php");
 	}
 	
 	function updateUserForm(u, c, w){
-	    $('#oldNameF')[0].value = u;
+	    $('#updateName')[0].value = u;
 	    if (c) {
-		$('#oldCompanyF')[0].value = c;
+		$('#updateCompany')[0].value = c;
 	    } else {
-		$('#oldCompanyF')[0].value = ''
+		$('#updateCompany')[0].value = ''
 	    }
 	    if (w) {
-		$('#oldWebsiteF')[0].value = w;
+		$('#updateWebsite')[0].value = w;
 	    } else {
-		$('#oldWebsiteF')[0].value = ''
+		$('#updateWebsite')[0].value = ''
 	    }
 	    $('#updateUser').modal('show');
-	    updateString = 'oldname=' + u + '&oldcompany=' + c + '&oldwebsite=' + w;
+	    updateString = 'oldname=' + u;
 	    return false;
 	}
 	function updateUser(){
-	    var name = $("#oldNameF").val();
-	    var comp = $("#oldCompanyF").val();
-	    var web = $("#oldWebsiteF").val();
+	    var name = $("#updateName").val();
+	    var comp = $("#updateCompany").val();
+	    var web = $("#updateWebsite").val();
+	    var passwd = $("#updatePassword").val();
 	    if (name.length == 0) {
 	      $("#errorName").modal('show');
 	      return false;
@@ -241,20 +248,23 @@ include("settings.php");
 	      $("#errorUrl").modal('show');
 	      return false
 	    }
-	    updateString += '&name=' + name + '&company=' + comp + '&website=' + web;
+	    updateString += '&name=' + name + '&company=' + comp + '&website=' + web + '&passwd=' + passwd;
 	    console.log(updateString);
-	    $("#updateUser").modal('hide');
-	    $("#updateSuccess").modal('show');
-// 	    $.ajax({
-// 	      type: "POST",
-// 	      url: "update_user.php",
-// 	      data: updateString,
-// 	      success: function() {
-// 		user.clearLayers();
-// 		cluster.clearLayers();
-// 		getUser();
-// 	      }
-// 	    });
+	    $.ajax({
+	      type: "POST",
+	      url: "update_user.php",
+	      data: updateString,
+	      success: function() {
+		$("#updateUser").modal('hide');
+		$("#updateSuccess").modal('show');
+		user.clearLayers();
+		cluster.clearLayers();
+		getUser();
+	      },
+	      error: function(request, status, error) {
+		console.log(request.responseText);
+	      }
+	    });
 	}
 	function getUser() {
 	    user = L.geoCsv(null,{
