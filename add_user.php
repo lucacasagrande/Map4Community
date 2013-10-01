@@ -12,6 +12,11 @@ $passwd = encrypt_decrypt('encrypt',htmlspecialchars(trim($_POST['passwd'])));
 $line = array($lon,$lat,$name,$city,$url,$passwd);
 
 $fp = fopen($CSVNAME, 'a');
-fputcsv($fp, $line, ";");
-fclose($fp);
+if ($fp == true) {
+    fputcsv($fp, $line, ";");
+    fclose($fp);
+} else {
+    header('HTTP/1.1 500', 'internal error');
+    echo "Please check the permissions of your file";
+}
 ?>
