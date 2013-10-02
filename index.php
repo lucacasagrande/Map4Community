@@ -72,14 +72,34 @@ include("settings.php");
 		Navigate
 	    </button>
 	    <button type="submit" class="btn btn-primary right" id="useradd">
-		<i class="icon-user icon-white"></i>Add your self
+		<i class="icon-user icon-white"></i> Add your self
 	    </button>
 	    <button type="submit" class="btn btn-primary right" id="zoommax">
 		<span class="glyphicon glyphicon-globe"></span>Zoom to max extent
 	    </button>
+	    <button type="submit" class="btn btn-primary right" id="about">
+		About
+	    </button>
 	</ul>
       </div>
     </nav>
+    <div class="modal hide fade" id="aboutDialog">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">x</a>
+        <h3>Update user information</h3>
+      </div>
+      <div class="modal-body">
+	  <b>Map4Community</b> is a map is created to be used in all community project to show where are the user of that project.<br />
+	  This project was inspired by the <a href="http://users.leafletjs.com/" target="_blank">Leaflet Users Map</a> and created for the  <a href="http://grass.osgeo.org" target="_blank">GRASS GIS</a> project.<br />
+	  It use:
+	  <ul>
+	      <li><a href="http://leafletjs.com/" target="_blank">Leaflet</a> for the map rendering, with <a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">MarkerCluster</a> and <a href="https://github.com/joker-x/Leaflet.geoCSV" target="_blank">geocsv</a> plugins</li>
+	      <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> for the style of page</li>
+	      <li><a href="http://jquery.com" target="_blank">JQuery</a> for the client side of website</li>
+	      <li><a href="http://php.net/" target="_blank">PHP</a> for the server side of website</li>
+	  </ul>
+      </div>
+    </div>
     <div class="modal hide fade" id="updateUser">
       <div class="modal-header">
         <a class="close" data-dismiss="modal">x</a>
@@ -365,6 +385,9 @@ include("settings.php");
 	$("#zoommax").bind('click', function(event) {
 	    map.closePopup()
 	    map.fitBounds(cluster.getBounds());
+	});
+	$("#about").bind('click', function(event) {
+	    $("#aboutDialog").modal('show');
 	});
 </script>
 
