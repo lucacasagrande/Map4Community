@@ -9,11 +9,12 @@ $lon = htmlspecialchars(trim($_POST['lon']));
 $url = htmlspecialchars(trim($_POST['website']));
 $passwd = encrypt_decrypt('encrypt',htmlspecialchars(trim($_POST['passwd'])));
 
-$line = array($lon,$lat,$name,$city,$url,$passwd);
+$line = join(';', array($lon,$lat,$name,$city,$url,$passwd));
+$line = $line . PHP_EOL;
 
 $fp = fopen($CSVNAME, 'a');
 if ($fp == true) {
-    fputcsv($fp, $line, ";");
+    fwrite($fp, $line);
     fclose($fp);
 } else {
     header('HTTP/1.1 500', 'internal error');

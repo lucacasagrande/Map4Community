@@ -17,10 +17,12 @@ if ($orig_file == true) {
     while (($data = fgetcsv($orig_file)) !== FALSE) {
 	$line = explode(';', $data[0]);
 	if (checkArray($line, $oldname, $passwd) == false) {
-	    fputcsv($new_file, $line, ";");
+	    $line = $data[0] . PHP_EOL;
+	    fwrite($new_file, $line);
 	} else {
-	    $newline = array($line[0],$line[1],$name,$city,$url,encrypt_decrypt('encrypt',$passwd));
-	    fputcsv($new_file, $newline, ";");
+	    $newline = join(';', array($line[0],$line[1],$name,$city,$url,encrypt_decrypt('encrypt',$passwd)));
+	    $newline = $newline . PHP_EOL;
+	    fwrite($new_file, $newline);
 	}
     }
 } else {

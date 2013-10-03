@@ -18,7 +18,8 @@ if ($orig_file == true) {
     while (($data = fgetcsv($orig_file)) !== FALSE) {
 	$line = explode(';', $data[0]);
 	if (checkArray($line, $name, $passwd) == false) {
-	    fputcsv($new_file, $line, ";");
+	    $line = $data[0] . PHP_EOL;
+	    fwrite($new_file, $line);
 	}
     }
 } else {
