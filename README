@@ -8,3 +8,8 @@ It use:
   * Bootstrap (http://getbootstrap.com/) for the style of page
   * JQuery (jquery.com) for the client side of website
   * PHP (http://php.net/) for the server side of website
+
+To use Map4Community just:
+  * download the source code in your web folder (in Debian and Ubuntu default is /var/www/)
+  * set the right permission to www-data user (specially for user.csv file, it has be writable by www-data user)
+  * that's all :-)
