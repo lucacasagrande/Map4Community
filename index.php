@@ -29,11 +29,12 @@ include("settings.php");
 	  padding: 0;
 	  height: 100%;
 	  width: 100%;
+	  overflow: hidden
       }
       #map {
 	  margin-top:40px;
 	  width:100%;
-	  height:100%;
+	  height:90%;
       }
       .leaflet-container {
 	  font: 16px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
@@ -306,7 +307,7 @@ include("settings.php");
 			    }
 			} else if (title == 'Website') {
 			    if (feature.properties[clave]) {
-				popup += '<b><a href="'+feature.properties[clave]+'" target="_blank">'+feature.properties[clave].replace('http://','')+'</a></b><br />';
+				popup += '<p style="text-align: right; margin: 5px 0 0 0"><b><a href="'+feature.properties[clave]+'" target="_blank">'+feature.properties[clave].replace('http://','')+'</a></b></p>';
 				oldWebsite = feature.properties[clave];
 			    } else {
 				oldWebsite = '';
