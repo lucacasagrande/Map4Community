@@ -1,0 +1,10 @@
+Map4Community is a map is created to be used in all community project to show where are the user of that project.
+
+This project was inspired by the Leaflet Users Map (http://users.leafletjs.com/) and created for the GRASS GIS (http://grass.osgeo.org) project.
+
+It use:
+
+  * Leaflet (http://leafletjs.com/) for the map rendering, with MarkerCluster (https://github.com/Leaflet/Leaflet.markercluster) and geocsv (https://github.com/joker-x/Leaflet.geoCSV) plugins
+  * Bootstrap (http://getbootstrap.com/) for the style of page
+  * JQuery (jquery.com) for the client side of website
+  * PHP (http://php.net/) for the server side of website
